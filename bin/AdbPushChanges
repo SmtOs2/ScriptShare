@@ -1,0 +1,122 @@
+#!/bin/bash
+
+findargs=(tmp -mmin -1 -type f)
+print="FALSE"
+while getopts ":m:d:c:f:ph" opt
+do
+   case $opt in
+      m ) findargs[2]=-"$OPTARG";;
+      d ) findargs[1]=-mtime
+          findargs[2]=-"$OPTARG";;
+      c ) key="$OPTARG";;
+      f ) filter="$OPTARG";;
+      p ) print="TRUE";;
+      h|? )
+          echo  
+          echo "PushChangedFiles脚本可以检测‘out/.../system/’下的最近变化的文件，并将之push到手机对应目录。"
+          echo "默认检测近一分钟内变化的文件，所以一般可以在‘mm’后紧接该命令： mm && PushChangedFiles"
+          echo "除此之外，如果结果文件中包含.apk文件，该命令在push完成之后会杀死其对应的进程，以便再次重启进程时使更改生效。"
+          echo "另外还增加了几个参数控制筛选结果，‘-m -d’两个选项控制时间过滤，‘-c -f’两个选项控制名称过滤。"
+          echo "使用方式为：PushChangedFiles [options]"
+          echo
+          echo "options可以是："
+          echo "-m[in]     n    : 以分钟为单位指定筛选out目录下n分钟之内有变化的文件，默认n=1,可以为小数。"
+          echo "-d[ay]     n    : 以天为单位定筛选out目录下n天之内有变化的文件，默认不使用该参数，而是使用‘-m 1’,可以为小数。"
+          echo "-c[ontain] name : 限定只过滤出包含‘name’关键词的变化文件,支持正则。"
+          echo "-f[ilter]  name : 限定从结果中移除包含‘name’关键词的变化文件，支持正则。"
+          echo "-p[rint]        : 仅仅打印执行此命令会做的操作，不实际执行。"
+          exit 1;;
+   esac
+done
+shift $(($OPTIND - 1))
+
+outdir=out/target/product
+curdir=$(pwd)
+# echo $curdir
+until [ -d $curdir/$outdir -o $curdir == "/" ]
+do
+    curdir=$(dirname $curdir)
+    # echo "curdir="$curdir
+done
+
+if [ -d $curdir/$outdir ]; then
+    outdir=$curdir/$outdir
+    # echo "found outdir:" $outdir
+else
+    echo "outdir not found!"
+    exit 1
+fi
+
+products=(`ls $outdir`)
+product_count=${#products[*]}
+# echo "product size=" $product_count
+if [[ $product_count > 1 ]]; then
+    for((i=0;i<$product_count;i++));do
+        num=$(($i+1))
+        echo "$num) ${products[$i]}"
+    done
+    echo
+    read -p "choose product:"
+    if [ $REPLY -le $product_count ];then
+        product=${products[$REPLY-1]}
+    else
+        product=$REPLY
+    fi
+else
+    product=`ls $outdir`
+fi
+
+productdir=$outdir/$product
+
+if [ -d $productdir -a -n "$product" ];then
+    echo "find out product dir:" $productdir
+else
+    echo "product dir [$productdir] is invalid!"
+    exit 1
+fi
+
+systemdir=$productdir/system
+findargs[0]=$systemdir
+#echo "find out system dir:" $systemdir
+
+#for e in ${findargs[@]};do
+#    echo $e
+#done
+
+for file in `find "${findargs[@]}"`;do
+    if [[ ! "$file" =~ $key || $filter != "" && "$file" =~ $filter ]];then
+        continue
+    fi
+
+    if [ $print == "TRUE" ];then
+        echo "adb push $file $(dirname ${file##$productdir})"
+    else
+        adb push $file $(dirname ${file##$productdir})
+    fi
+
+    fn=$(basename $file)
+    if [[ ${fn##*.} == "apk" ]];then
+        # echo "find apk!" $fn
+        package=$(adb shell pm list packages -f | grep $fn)
+        package=${package##*$fn=}
+        packages=(${packages[@]} $package)
+    fi
+done
+
+for pkg in ${packages[@]};do
+   if [ $pkg == "android" ];then
+       continue
+   fi
+   echo "kill $pkg ..."
+   if [ $print != "TRUE" ];then
+       adb shell ps | awk "/$pkg/{print \$2}" | xargs adb shell kill
+   fi
+done
+
+
+
+
+
+
+
+
