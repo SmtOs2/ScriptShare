@@ -13,8 +13,13 @@ alias makeinstall='function __install()
     else
       suffix="$3"
     fi
-    cd $SMT_SRC_HOME/android-$2-$suffix/packages/apps/$1;mm&&adb push $SMT_SRC_HOME/android-$2-$suffix/out/target/product/$2/system/priv-app/$1/$1.apk /system/priv-app/$1/$1.apk;
-    echo push to /system/priv-app/$1
+    if [ "$1" = "TextBoom" ];then
+      app_path=app 
+    else
+      app_path=priv-app
+    fi
+    cd $SMT_SRC_HOME/android-$2-$suffix/packages/apps/$1;mm&&adb push $SMT_SRC_HOME/android-$2-$suffix/out/target/product/$2/system/$app_path/$1/$1.apk /system/$app_path/$1/$1.apk;
+    echo push to /system/$app_path/$1
     unset -f __install; 
     
     echo ""
@@ -36,8 +41,13 @@ alias pushinstall='function __pushinstall()
     else
       suffix="$3"
     fi
-    cd $SMT_SRC_HOME/android-$2-$suffix/packages/apps/$1&&adb push $SMT_SRC_HOME/android-$2-$suffix/out/target/product/$2/system/priv-app/$1/$1.apk /system/priv-app/$1/$1.apk;
-    echo push to /system/priv-app/$1
+    if [ "$1" = "TextBoom" ];then
+      app_path=app 
+    else
+      app_path=priv-app
+    fi
+    cd $SMT_SRC_HOME/android-$2-$suffix/packages/apps/$1&&adb push $SMT_SRC_HOME/android-$2-$suffix/out/target/product/$2/system/$app_path/$1/$1.apk /system/$app_path/$1/$1.apk;
+    echo push to /system/$app_path/$1
     unset -f __install; 
     
     echo ""
