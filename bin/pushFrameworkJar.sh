@@ -5,6 +5,10 @@
 # Created Time: 2016年07月12日 星期二 16时00分31秒
 #########################################################################
 #!/bin/sh
+if [ $# -lt 1 ];then
+echo "USAGE: pushFrameworkJar.sh trident"
+exit 1;
+fi
 CCA=$1
 adb root
 adb remount
