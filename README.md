@@ -2,7 +2,7 @@
 
 ## 基本配置
 ```
-请在.bashrc中加上类似下面的配置:
+请先修改下面三变量，然后在.bashrc中加上类似下面的配置:
 SMT_SHELL_SHARE_HOME为你检出的当前库bin目录的路径
 SMT_SRC_HOME为你检出的os源码的根目录
 SMT_MAIN_PROJECT为你现在主要用来编译开发的项目，如:trident或ocean
