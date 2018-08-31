@@ -1,5 +1,37 @@
 # 公用脚本
 
+## 基本配置
+```
+请在.bashrc中加上类似下面的配置:
+SMT_SHELL_SHARE_HOME为你检出的当前库bin目录的路径
+SMT_SRC_HOME为你检出的os源码的根目录
+SMT_MAIN_PROJECT为你现在主要用来编译开发的项目，如:trident或ocean
+
+例如下面这样:
+SMT_SHELL_SHARE_HOME=$HOME/git_smt/ScriptShare/bin
+SMT_SRC_HOME=$HOME/src
+SMT_MAIN_PROJECT=trident
+export SMT_SHELL_SHARE_HOME
+export SMT_SRC_HOME
+export SMT_MAIN_PROJECT
+if test -e $SMT_SHELL_SHARE_HOME/installconfig; then
+     . $SMT_SHELL_SHARE_HOME/installconfig
+fi
+```
+## installconfig 中相关脚本
+```
+makeideapills makesara makesidebar maketextboom 会分别cd到你os的源码路径(SMT_SRC_HOME配置影响)
+对应SMT_MAIN_PROJECT目录下编译并push，杀掉手机对应进程。比如我现在SMT_MAIN_PROJECT配置的是trident，
+那就会cd到$SMT_SRC_HOME/android-trident-dev/package/apps/对应应用下去编译push。
+类似：
+makeideapills trident trinity 会去对应trident-trinity目录下编译push，杀进程
+makeideapills ocean 会去对应ocean目录下编译push，杀进程
+
+pushideapills pushsara pushsidebar pushtextboom 跟make...的区别是不会编译，只会push上次编译的结果
+类似：
+pushtextboom trident trinity
+pushtextboom ocean
+```      
 ## CheckApkSignature.py
 
       CheckApkSignature.py test.apk
@@ -81,4 +113,17 @@ Dumping file...current size = 0
 ### SUCCESS ###: all done!
 file location: /home/you/Temp/memdump/com.smartisanos.sara-2018-08-31/com.smartisanos.sara-conv.hprof
 ```
+## adbkill中相关脚本
+```
+  会杀掉包含关键词的进程：
+  adbkill sara  会杀掉sara的进程
+  adbkill sidebar  会杀掉sidebar的进程
+```
+## framework代码push相关脚本
 
+```
+  需要先自己cd到对应项目源码根路径, pushFrameworkJar.sh会push framework.jar, pushServiesJar.sh会push services.jar  
+  pushFrameworkJar.sh trident  
+  pushServiesJar.sh trident
+
+```
