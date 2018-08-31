@@ -68,3 +68,17 @@
 
 从`path`递归的把pcm转成mp3，需要apt安装ffmpeg。
 
+
+## pullheap
+
+把指定包名的 app 的 memheap dump 出来，pull 到 ~/Temp/memdump/ 目录下，并转化成能用 MAT 直接能打开的 hprof 格式。(Android/platform-tools/ 需要在环境路径里，因为要用到里面的 hprof-conv 来转换 heap 文件)
+
+```sh
+➜  ~ pullheap com.smartisanos.sara
+### NOTICE ###: dumpheap begin
+Dumping file...current size = 0
+...
+### SUCCESS ###: all done!
+file location: /home/you/Temp/memdump/com.smartisanos.sara-2018-08-31/com.smartisanos.sara-conv.hprof
+```
+

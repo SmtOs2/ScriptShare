@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# constants define
+DATE=`date +%Y-%m-%d`
+packageName=$1
+rawFileName=$packageName.hprof
+convFileName=$packageName-conv.hprof
+rawHeap=/data/local/tmp/${rawFileName}
+dstFolder=~/Temp/memdump/$packageName-$DATE
+
+
+# methods define
+# dumpheap process check, adb shell dumpheap runs async
+waitForFile() {
+    # wait for file to stabilize at a size above 0
+    local lastSize=0
+    local matchCount=0
+    while [ ${matchCount} -lt 3 ] ;
+    do
+        if [[ ${lastSize} -gt 0 && $(fileSize) = ${lastSize} ]] ;
+            then
+            let "matchCount+=1"
+            echo "match ${matchCount}"
+        else
+            matchCount=0
+            lastSize=$(fileSize)
+            echo "Dumping file...current size = ${lastSize}"
+        fi
+        sleep 0.5
+    done
+    echo "Heap Dump Complete, file size = ${lastSize}"
+}
+
+fileSize() {
+    local size=$(echo $(adb shell "ls -s $rawHeap") | cut -f1 -d' ')
+    echo ${size}
+}
+
+# exec begin
+echo "### NOTICE ###: dumpheap begin"
+adb shell am dumpheap ${packageName} ${rawHeap}
+
+waitForFile
+
+# mkdir if needed
+if [ -e ${dstFolder} ]; then
+    echo "### NOTICE ###: Folder $dstFolder exists"
+else
+    echo "### NOTICE ###: Folder $dstFolder not exists, create now!"
+    mkdir -p ${dstFolder}
+fi
+
+echo "### NOTICE ###: pull begin"
+adb pull ${rawHeap} ${dstFolder}
+
+echo "### NOTICE ###: convert begin"
+hprof-conv -z ${dstFolder}/${rawFileName} ${dstFolder}/${convFileName}
+
+echo "### SUCCESS ###: all done!"
+echo "file location: $dstFolder/$convFileName"
