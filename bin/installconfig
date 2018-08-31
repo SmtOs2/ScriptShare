@@ -1,3 +1,5 @@
+export PATH=$PATH:$SMT_SHELL_SHARE_HOME
+
 alias makeinstall='function __install() 
 {
     echo start installing ==============================================
