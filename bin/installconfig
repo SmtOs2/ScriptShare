@@ -1,0 +1,165 @@
+alias makeinstall='function __install() 
+{
+    echo start installing ==============================================
+    echo TARGET_PRODUCT = $2
+    echo "***************************************************************"
+    echo ""
+    echo ""
+    suffix=""
+    if [ -z "$3" ];then
+      suffix="dev"
+    else
+      suffix="$3"
+    fi
+    cd $SMT_SRC_HOME/android-$2-$suffix/packages/apps/$1;mm&&adb push $SMT_SRC_HOME/android-$2-$suffix/out/target/product/$2/system/priv-app/$1/$1.apk /system/priv-app/$1/$1.apk;
+    echo push to /system/priv-app/$1
+    unset -f __install; 
+    
+    echo ""
+    echo ""
+    echo "***************************************************************"
+    echo finish intalling ==============================================
+}; __install'
+
+alias pushinstall='function __pushinstall() 
+{
+    echo start installing ==============================================
+    echo TARGET_PRODUCT = $2
+    echo "***************************************************************"
+    echo ""
+    echo ""
+    suffix=""
+    if [ -z "$3" ];then
+      suffix="dev"
+    else
+      suffix="$3"
+    fi
+    cd $SMT_SRC_HOME/android-$2-$suffix/packages/apps/$1&&adb push $SMT_SRC_HOME/android-$2-$suffix/out/target/product/$2/system/priv-app/$1/$1.apk /system/priv-app/$1/$1.apk;
+    echo push to /system/priv-app/$1
+    unset -f __install; 
+    
+    echo ""
+    echo ""
+    echo "***************************************************************"
+    echo finish intalling ==============================================
+}; __pushinstall'
+
+alias makeideapills='function __makeideapills() 
+{
+   if [ "$1" ];then
+      CCA=$1
+   else
+      CCA=$SMT_MAIN_PROJECT
+   fi
+   if [ "$2" ];then
+      EXTRA=$2
+      makeinstall IdeaPills "$CCA" "$EXTRA"&&adbkill ideapills
+   else
+      makeinstall IdeaPills "$CCA"&&adbkill ideapills
+   fi   
+}; __makeideapills'
+
+alias makesara='function __makesara() 
+{
+   if [ "$1" ];then
+      CCA=$1
+   else
+      CCA=$SMT_MAIN_PROJECT
+   fi
+   if [ "$2" ];then
+      EXTRA=$2
+      makeinstall VoiceAssistant "$CCA" "$EXTRA"&&adbkill com.smartisanos.sara
+   else
+      makeinstall VoiceAssistant "$CCA"&&adbkill com.smartisanos.sara
+   fi   
+}; __makesara'
+
+alias makesidebar='function __makesidebar() 
+{
+   if [ "$1" ];then
+      CCA=$1
+   else
+      CCA=$SMT_MAIN_PROJECT
+   fi
+   if [ "$2" ];then
+      EXTRA=$2
+      makeinstall Sidebar "$CCA" "$EXTRA"&&adbkill com.smartisanos.sidebar
+   else
+      makeinstall Sidebar "$CCA"&&adbkill com.smartisanos.sidebar
+   fi   
+}; __makesidebar'
+
+alias maketextboom='function __maketextboom() 
+{
+   if [ "$1" ];then
+      CCA=$1
+   else
+      CCA=$SMT_MAIN_PROJECT
+   fi
+   if [ "$2" ];then
+      EXTRA=$2
+      makeinstall TextBoom "$CCA" "$EXTRA"&&adbkill com.smartisanos.textboom
+   else
+      makeinstall TextBoom "$CCA"&&adbkill com.smartisanos.textboom
+   fi   
+}; __maketextboom'
+
+alias pushideapills='function __pushideapills() 
+{
+   if [ "$1" ];then
+      CCA=$1
+   else
+      CCA=$SMT_MAIN_PROJECT
+   fi
+   if [ "$2" ];then
+      EXTRA=$2
+      pushinstall IdeaPills "$CCA" "$EXTRA"&&adbkill ideapills
+   else
+      pushinstall IdeaPills "$CCA"&&adbkill ideapills
+   fi   
+}; __pushideapills'
+
+alias pushsara='function __pushsara() 
+{
+   if [ "$1" ];then
+      CCA=$1
+   else
+      CCA=$SMT_MAIN_PROJECT
+   fi
+   if [ "$2" ];then
+      EXTRA=$2
+      pushinstall VoiceAssistant "$CCA" "$EXTRA"&&adbkill com.smartisanos.sara
+   else
+      pushinstall VoiceAssistant "$CCA"&&adbkill com.smartisanos.sara
+   fi   
+}; __pushsara'
+
+alias pushsidebar='function __pushsidebar() 
+{
+   if [ "$1" ];then
+      CCA=$1
+   else
+      CCA=$SMT_MAIN_PROJECT
+   fi
+   if [ "$2" ];then
+      EXTRA=$2
+      pushinstall Sidebar "$CCA" "$EXTRA"&&adbkill com.smartisanos.sidebar
+   else
+      pushinstall Sidebar "$CCA"&&adbkill com.smartisanos.sidebar
+   fi   
+}; __pushsidebar'
+
+alias pushtextboom='function __pushtextboom() 
+{
+   if [ "$1" ];then
+      CCA=$1
+   else
+      CCA=$SMT_MAIN_PROJECT
+   fi
+   if [ "$2" ];then
+      EXTRA=$2
+      pushinstall TextBoom "$CCA" "$EXTRA"&&adbkill com.smartisanos.textboom
+   else
+      pushinstall TextBoom "$CCA"&&adbkill com.smartisanos.textboom
+   fi   
+}; __pushtextboom'
