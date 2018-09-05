@@ -1,4 +1,34 @@
+# export our self
 export PATH=$PATH:$SMT_SHELL_SHARE_HOME
+
+# export android tools
+if [ $ANDROID_HOME ];then
+   export PATH=$PATH:$ANDROID_HOME/platform-tools/
+   export PATH=$PATH:$ANDROID_HOME/platform-tools/systrace/
+elif [ $ANDROID_SDK ];then
+   export PATH=$PATH:$ANDROID_SDK/platform-tools/
+   export PATH=$PATH:$ANDROID_SDK/platform-tools/systrace/
+fi
+
+# some alias
+alias systrace='function __systrace()
+{
+   time_input=10
+   if [ $1 ];then
+     time_input=$1
+   fi
+   DATE=`date +%Y-%m-%d`
+   dstFolder=~/Temp/tracedump
+   if [ -e ${dstFolder} ]; then
+      echo "### NOTICE ###: Folder $dstFolder exists"
+   else
+      echo "### NOTICE ###: Folder $dstFolder not exists, create now!"
+      mkdir -p ${dstFolder}
+   fi
+   out_file=$dstFolder/$DATE-trace.html
+   systrace.py --time=$time_input -o $out_file am sched gfx view wm
+   echo "### Save to $out_file ###"
+}; __systrace'
 
 alias makeinstall='function __install() 
 {
