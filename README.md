@@ -113,6 +113,17 @@ Dumping file...current size = 0
 ### SUCCESS ###: all done!
 file location: /home/you/Temp/memdump/com.smartisanos.sara-2018-08-31/com.smartisanos.sara-conv.hprof
 ```
+
+## systrace
+systrace就是systrace.py把常用参数跟上的alias
+
+```
+systrace 会dump现在10秒内的trace
+
+systrace 5 会dump5秒内的trace
+
+```
+
 ## adbkill中相关脚本
 ```
   会杀掉包含关键词的进程：
