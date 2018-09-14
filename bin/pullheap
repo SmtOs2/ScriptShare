@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # constants define
-DATE=`date +%Y-%m-%d`
+DATE=`date +%Y-%m-%d-[%H:%M]`
 packageName=$1
 rawFileName=$packageName.hprof
 convFileName=$packageName-conv.hprof
