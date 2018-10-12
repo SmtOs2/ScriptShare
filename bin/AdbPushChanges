@@ -83,15 +83,31 @@ findargs[0]=$systemdir
 #    echo $e
 #done
 
-for file in `find "${findargs[@]}"`;do
+fchanged=`find "${findargs[@]}"`
+findargs[4]=l #设置find的文件类型为l链接
+lchanged=`find "${findargs[@]}"`
+changed=($fchanged $lchanged)
+for file in ${changed[@]};do
     if [[ ! "$file" =~ $key || $filter != "" && "$file" =~ $filter ]];then
         continue
     fi
 
     if [ $print == "TRUE" ];then
-        echo "adb push $file $(dirname ${file##$productdir})"
+        link_target=`ls -l $file | grep ^l | awk '{print $11}'`
+        if [ $link_target ];then
+            link_target=$productdir$link_target
+            echo "adb push $link_target $(dirname ${file##$productdir})"
+        else
+            echo "adb push $file $(dirname ${file##$productdir})"
+        fi
     else
-        adb push $file $(dirname ${file##$productdir})
+        link_target=`ls -l $file | grep ^l | awk '{print $11}'`
+        if [ $link_target ];then
+            link_target=$productdir$link_target
+            adb push $link_target $(dirname ${file##$productdir})
+        else
+            adb push $file $(dirname ${file##$productdir})
+        fi
     fi
 
     fn=$(basename $file)

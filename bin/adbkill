@@ -1,6 +1,3 @@
 #!/bin/bash
-PROIDS=(`adb shell ps|grep $1|awk '{print $2}'`)
-for PROID in ${PROIDS[@]}  
-do  
-   adb shell kill $PROID&&echo "$PROID over"
-done
+pkg=$1
+adb shell ps | awk "/$pkg/{system(\"echo kill package: \"\$NF); system(\"adb shell kill \"\$2)}"

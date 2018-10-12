@@ -11,6 +11,8 @@ elif [ $ANDROID_SDK ];then
 fi
 
 # some alias
+alias apc=AdbPushChanges
+alias ak=adbkill
 alias systrace='function __systrace()
 {
    time_input=10
